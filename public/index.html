@@ -263,58 +263,70 @@
         });
 		
 async function fetchAndDisplayData() {
-    const symbol = "BTCUSDT";
+    const apiBaseUrl = "https://invest-98q4.onrender.com"; // URL publique de votre backend sur Render
+    const symbolBTC = "BTCUSDT";
+    const symbolETH = "ETHUSDT";
     const dailyInvestment = 4;
     const startDate = "2024-11-25";
     const endDate = new Date().toISOString().split('T')[0];
-    const symbol1 = "ETHUSDT";
-    console.log("started");
-	let totalProfitOrLoss = 0;
-    // Premier try
+    let totalProfitOrLoss = 0;
+
+    console.log("Début du fetch");
+
+    // Premier try pour BTC
     try {
-        const response = await fetch('https://invest-98q4.onrender.com/calculate', {
+        const responseBTC = await fetch(`${apiBaseUrl}/calculate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ symbol, dailyInvestment, startDate, endDate })
+            body: JSON.stringify({ symbol: symbolBTC, dailyInvestment, startDate, endDate }),
         });
 
-        const result = await response.json();
+        const resultBTC = await responseBTC.json();
 
-        if (response.ok) {
-            document.getElementById('pActB').innerHTML = `${result.lastPrice.toFixed(2)} USDT`;
-            document.getElementById('profitLossB').innerHTML = `${result.profitOrLoss >= 0 ? '+' : ''}${result.profitOrLoss.toFixed(2)} USDT (${result.percentageChange}%)`;
-			 totalProfitOrLoss += result.profitOrLoss;
+        if (responseBTC.ok) {
+            document.getElementById('pActB').innerHTML = `${resultBTC.lastPrice.toFixed(2)} USDT`;
+            document.getElementById('profitLossB').innerHTML = 
+                `${resultBTC.profitOrLoss >= 0 ? '+' : ''}${resultBTC.profitOrLoss.toFixed(2)} USDT (${resultBTC.percentageChange}%)`;
+            totalProfitOrLoss += resultBTC.profitOrLoss;
         } else {
-            document.getElementById('resultsBTC').innerHTML = `<p style="color:red;">Erreur : ${result.error}</p>`;
+            document.getElementById('resultsBTC').innerHTML = 
+                `<p style="color:red;">Erreur : ${resultBTC.error || "Erreur inconnue"}</p>`;
         }
     } catch (error) {
-        document.getElementById('resultsBTC').innerHTML = `<p style="color:red;">Erreur : ${error.message}</p>`;
+        document.getElementById('resultsBTC').innerHTML = 
+            `<p style="color:red;">Erreur : ${error.message}</p>`;
     }
 
-    // Deuxième try
+    // Deuxième try pour ETH
     try {
-        const response = await fetch('https://invest-98q4.onrender.com/calculate', {
+        const responseETH = await fetch(`${apiBaseUrl}/calculate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ symbol: symbol1, dailyInvestment, startDate, endDate })
+            body: JSON.stringify({ symbol: symbolETH, dailyInvestment, startDate, endDate }),
         });
 
-        const result = await response.json();
+        const resultETH = await responseETH.json();
 
-        if (response.ok) {
-            document.getElementById('pActE').innerHTML = `${result.lastPrice.toFixed(2)} USDT`;
-            document.getElementById('profitLossE').innerHTML = `${result.profitOrLoss >= 0 ? '+' : ''}${result.profitOrLoss.toFixed(2)} USDT (${result.percentageChange}%)`;
-			totalProfitOrLoss += result.profitOrLoss; 
+        if (responseETH.ok) {
+            document.getElementById('pActE').innerHTML = `${resultETH.lastPrice.toFixed(2)} USDT`;
+            document.getElementById('profitLossE').innerHTML = 
+                `${resultETH.profitOrLoss >= 0 ? '+' : ''}${resultETH.profitOrLoss.toFixed(2)} USDT (${resultETH.percentageChange}%)`;
+            totalProfitOrLoss += resultETH.profitOrLoss;
         } else {
-            document.getElementById('resultsETH').innerHTML = `<p style="color:red;">Erreur : ${result.error}</p>`;
+            document.getElementById('resultsETH').innerHTML = 
+                `<p style="color:red;">Erreur : ${resultETH.error || "Erreur inconnue"}</p>`;
         }
     } catch (error) {
-        document.getElementById('resultsETH').innerHTML = `<p style="color:red;">Erreur : ${error.message}</p>`;
+        document.getElementById('resultsETH').innerHTML = 
+            `<p style="color:red;">Erreur : ${error.message}</p>`;
     }
-	document.getElementById('total').innerHTML = `${totalProfitOrLoss >= 0 ? '+' : ''}${totalProfitOrLoss.toFixed(2)} USDT`;
 
+    // Mise à jour du total
+    document.getElementById('total').innerHTML = 
+        `${totalProfitOrLoss >= 0 ? '+' : ''}${totalProfitOrLoss.toFixed(2)} USDT`;
+
+    console.log("Fin du fetch");
 }
-
 
 
     </script>
