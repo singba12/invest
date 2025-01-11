@@ -1,15 +1,21 @@
-
 {
-  "name": "crypto-calculator",
+  "name": "investment-calculator",
   "version": "1.0.0",
+  "description": "API for calculating cryptocurrency investments",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
     "body-parser": "^1.20.2",
-    "cors": "^2.8.5"
-  }
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
