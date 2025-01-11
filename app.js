@@ -1,13 +1,17 @@
 const express = require('express');
 const axios = require('axios');
-const bodyParser = require('body-parser');														
+const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path'); // Pour gérer les fichiers statiques
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Fonction pour convertir une date en timestamp Unix (ms)
 function toTimestamp(date) {
@@ -27,7 +31,15 @@ function validateInput(symbol, dailyInvestment, startDate, endDate) {
     if (!startDate.match(dateRegex) || !endDate.match(dateRegex)) {
         throw new Error("Les dates doivent être au format YYYY-MM-DD.");
     }
+    if (toTimestamp(startDate) >= toTimestamp(endDate)) {
+        throw new Error("La date de début doit être antérieure à la date de fin.");
+    }
 }
+
+// Route principale (GET) pour servir une réponse par défaut
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Route pour calculer le bénéfice ou la perte
 app.post('/calculate', async (req, res) => {
@@ -50,7 +62,7 @@ app.post('/calculate', async (req, res) => {
                     symbol: symbol,
                     interval: '1d',
                     startTime: currentStartTime,
-                    endTime: Math.min(currentStartTime + 1000 * 86400000, endTime),
+                    endTime: Math.min(currentStartTime + 1000 * 86400, endTime),
                     limit: 1000
                 }
             });
@@ -74,8 +86,8 @@ app.post('/calculate', async (req, res) => {
                 }
             }
 
-            // Avancer dans la période
-            currentStartTime += 1000 * 86400000;
+            // Avancer dans la période (ajouter 1 jour en millisecondes)
+            currentStartTime += 86400 * 1000;
         }
 
         // Vérifiez que startPrice a été assigné
