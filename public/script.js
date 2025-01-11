@@ -7,7 +7,7 @@ document.getElementById('calcForm').addEventListener('submit', async function(ev
     const endDate = document.getElementById('endDate').value;
 
     try {
-        const response = await fetch('http://localhost:10000/calculate', {
+        const response = await fetch('https://invest-98q4.onrender.com/calculate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ symbol, dailyInvestment, startDate, endDate })
